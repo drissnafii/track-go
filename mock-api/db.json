@@ -1,0 +1,198 @@
+{
+  "livreurs": [
+    {
+      "id": "liv-001",
+      "nom": "Dupont",
+      "prenom": "Jean",
+      "email": "jean.dupont@trackgo.com",
+      "password": "password123",
+      "telephone": "+33612345678",
+      "vehicule": "Renault Kangoo",
+      "zone": "Paris 11e"
+    }
+  ],
+  "tournees": [
+    {
+      "id": "tour-001",
+      "date": "2026-02-23",
+      "livreurId": "liv-001",
+      "zone": "Paris 11e",
+      "totalColis": 15,
+      "colisLivres": 0,
+      "colisEchec": 0,
+      "colisEnCours": 0,
+      "startTime": null,
+      "endTime": null
+    }
+  ],
+  "colis": [
+    {
+      "id": "col-001",
+      "barcode": "TG-2026-001-A7B3",
+      "destinataire": {
+        "nom": "Martin",
+        "prenom": "Sophie",
+        "telephone": "+33698765432",
+        "adresse": "12 Rue de la Roquette",
+        "ville": "Paris",
+        "codePostal": "75011",
+        "coordonnees": {
+          "latitude": 48.8534,
+          "longitude": 2.3741
+        }
+      },
+      "poids": 2.5,
+      "dimensions": "30x20x15",
+      "description": "Livres et accessoires",
+      "status": "EN_ATTENTE",
+      "ordre": 1,
+      "creneauLivraison": {
+        "debut": "2026-02-23T09:00:00Z",
+        "fin": "2026-02-23T12:00:00Z"
+      },
+      "tourneeId": "tour-001",
+      "livreurId": "liv-001"
+    },
+    {
+      "id": "col-002",
+      "barcode": "TG-2026-002-B8C4",
+      "destinataire": {
+        "nom": "Dubois",
+        "prenom": "Marc",
+        "telephone": "+33611223344",
+        "adresse": "45 Boulevard Voltaire",
+        "ville": "Paris",
+        "codePostal": "75011",
+        "coordonnees": {
+          "latitude": 48.8582,
+          "longitude": 2.3789
+        }
+      },
+      "poids": 1.2,
+      "dimensions": "20x15x10",
+      "description": "Matériel électronique",
+      "status": "EN_ATTENTE",
+      "ordre": 2,
+      "creneauLivraison": {
+        "debut": "2026-02-23T10:00:00Z",
+        "fin": "2026-02-23T13:00:00Z"
+      },
+      "tourneeId": "tour-001",
+      "livreurId": "liv-001"
+    },
+    {
+      "id": "col-003",
+      "barcode": "TG-2026-003-C9D5",
+      "destinataire": {
+        "nom": "Leroy",
+        "prenom": "Alice",
+        "telephone": "+33655667788",
+        "adresse": "10 Rue Oberkampf",
+        "ville": "Paris",
+        "codePostal": "75011",
+        "coordonnees": {
+          "latitude": 48.8655,
+          "longitude": 2.3711
+        }
+      },
+      "poids": 5.0,
+      "dimensions": "40x30x20",
+      "description": "Vêtements",
+      "status": "EN_COURS",
+      "ordre": 3,
+      "creneauLivraison": {
+        "debut": "2026-02-23T13:00:00Z",
+        "fin": "2026-02-23T16:00:00Z"
+      },
+      "tourneeId": "tour-001",
+      "livreurId": "liv-001"
+    },
+    {
+      "id": "col-004",
+      "barcode": "TG-2026-004-D0E6",
+      "destinataire": {
+        "nom": "Roux",
+        "prenom": "Thomas",
+        "telephone": "+33699887766",
+        "adresse": "88 Avenue de la République",
+        "ville": "Paris",
+        "codePostal": "75011",
+        "coordonnees": {
+          "latitude": 48.8624,
+          "longitude": 2.3812
+        }
+      },
+      "poids": 0.5,
+      "dimensions": "15x10x5",
+      "description": "Documents importants",
+      "status": "LIVRE",
+      "ordre": 4,
+      "creneauLivraison": {
+        "debut": "2026-02-23T08:00:00Z",
+        "fin": "2026-02-23T10:00:00Z"
+      },
+      "tourneeId": "tour-001",
+      "livreurId": "liv-001"
+    },
+    {
+      "id": "col-005",
+      "barcode": "TG-2026-005-E1F7",
+      "destinataire": {
+        "nom": "Moreau",
+        "prenom": "Claire",
+        "telephone": "+33677885544",
+        "adresse": "5 Rue de Charonne",
+        "ville": "Paris",
+        "codePostal": "75011",
+        "coordonnees": {
+          "latitude": 48.8521,
+          "longitude": 2.3765
+        }
+      },
+      "poids": 3.2,
+      "dimensions": "25x20x15",
+      "description": "Articles de cuisine",
+      "status": "INCIDENT",
+      "ordre": 5,
+      "creneauLivraison": {
+        "debut": "2026-02-23T14:00:00Z",
+        "fin": "2026-02-23T17:00:00Z"
+      },
+      "tourneeId": "tour-001",
+      "livreurId": "liv-001"
+    }
+  ],
+  "proofs": [
+    {
+      "id": "proof-001",
+      "colisId": "col-004",
+      "livreurId": "liv-001",
+      "timestamp": "2026-02-23T08:45:00Z",
+      "position": {
+        "latitude": 48.8624,
+        "longitude": 2.3812,
+        "timestamp": "2026-02-23T08:45:00Z",
+        "accuracy": 15
+      },
+      "scannedBarcode": "TG-2026-004-D0E6",
+      "barcodeMatch": true
+    }
+  ],
+  "incidents": [
+    {
+      "id": "inc-001",
+      "colisId": "col-005",
+      "livreurId": "liv-001",
+      "type": "DESTINATAIRE_ABSENT",
+      "description": "Le client ne repond pas à l'interphone",
+      "position": {
+        "latitude": 48.8521,
+        "longitude": 2.3765,
+        "timestamp": "2026-02-23T14:15:00Z",
+        "accuracy": 20
+      },
+      "timestamp": "2026-02-23T14:15:00Z",
+      "resolved": false
+    }
+  ]
+}
