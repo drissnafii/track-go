@@ -1,18 +1,33 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
+# Dependencies
+node_modules/
 
-# Test binary, built with `go test -c`
-*.test
+# Expo
+.expo/
+dist/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
 
-# Output of the go coverage tool, specifically when used with Litmus
-*.out
+# Environment
+.env
+.env.local
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# IDE
+.idea/
 
-# Go workspace file
-go.work
+# macOS
+.DS_Store
+
+# Logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing
+coverage/
