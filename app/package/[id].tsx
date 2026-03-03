@@ -20,6 +20,39 @@ export default function PackageDetailsScreen() {
       <View style={styles.content}>
         <Text style={styles.emptyText}>Contenu supprimé</Text>
       </View>
+
+      <View style={styles.footer}>
+        <Pressable
+          style={styles.reportButton}
+          onPress={() =>
+            router.push({ pathname: "/incident", params: { colisId: id } })
+          }
+        >
+          <Ionicons
+            name="alert-circle-outline"
+            size={18}
+            color={Colors.error}
+            style={{ marginRight: 6 }}
+          />
+          <Text style={styles.reportButtonText} numberOfLines={1}>
+            Signaler un problème
+          </Text>
+        </Pressable>
+        <Pressable
+          style={styles.deliverButton}
+          onPress={() =>
+            router.push({ pathname: "/scan", params: { colisId: id } })
+          }
+        >
+          <Ionicons
+            name="checkmark-circle-outline"
+            size={18}
+            color={Colors.onPrimary}
+            style={{ marginRight: 6 }}
+          />
+          <Text style={styles.deliverButtonText}>Livrer</Text>
+        </Pressable>
+      </View>
     </SafeAreaView>
   );
 }
@@ -54,5 +87,43 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     color: Colors.neutral[400],
+  },
+  footer: {
+    flexDirection: "row",
+    padding: 16,
+    gap: 12,
+    borderTopWidth: 1,
+    borderTopColor: Colors.neutral[200],
+    backgroundColor: Colors.background,
+  },
+  reportButton: {
+    flex: 1.4,
+    flexDirection: "row",
+    backgroundColor: Colors.errorContainer,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    borderRadius: 9999,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  reportButtonText: {
+    color: Colors.error,
+    fontWeight: "700",
+    fontSize: 13,
+  },
+  deliverButton: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: Colors.primary,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 9999,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  deliverButtonText: {
+    color: Colors.onPrimary,
+    fontWeight: "700",
+    fontSize: 14,
   },
 });
