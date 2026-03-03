@@ -2,10 +2,11 @@ import { Colors } from "@/constants/colors";
 import { useAuth } from "@/contexts/auth-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -13,6 +14,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -22,10 +24,9 @@ export default function LoginScreen() {
   const [identifiant, setIdentifiant] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [identifiantFocused, setIdentifiantFocused] = useState(false);
-  const [passwordFocused, setPasswordFocused] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const passwordRef = useRef<TextInput>(null);
 
   const handleLogin = async () => {
     if (!identifiant || !password) {
@@ -48,183 +49,175 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={styles.keyboardView}
       >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* Top Accent Bar */}
-          <View style={styles.accentBar} />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Top Accent Bar */}
+            <View style={styles.accentBar} />
 
-          {/* Logo Section */}
-          <View style={styles.logoSection}>
-            <View style={styles.logoContainer}>
-              <Ionicons name="cube" size={48} color={Colors.primary} />
-            </View>
-            <Text style={styles.title}>Track&Go</Text>
-            <Text style={styles.subtitle}>
-              Suivez vos expéditions en temps réel
-            </Text>
-          </View>
-
-          {/* Login Form */}
-          <View style={styles.formContainer}>
-            {errorMessage ? (
-              <View style={styles.errorContainer}>
-                <Ionicons
-                  name="alert-circle-outline"
-                  size={18}
-                  color={Colors.error}
-                />
-                <Text style={styles.errorText}>{errorMessage}</Text>
+            {/* Logo Section */}
+            <View style={styles.logoSection}>
+              <View style={styles.logoContainer}>
+                <Ionicons name="cube" size={48} color={Colors.primary} />
               </View>
-            ) : null}
-
-            {/* Identifiant Field */}
-            <View style={styles.fieldContainer}>
-              <Text style={styles.label}>Identifiant</Text>
-              <View
-                style={[
-                  styles.inputWrapper,
-                  identifiantFocused && styles.inputWrapperFocused,
-                ]}
-              >
-                <Ionicons
-                  name="person-outline"
-                  size={20}
-                  color={
-                    identifiantFocused ? Colors.primary : Colors.neutral[500]
-                  }
-                  style={styles.inputIcon}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="nom@exemple.com"
-                  placeholderTextColor={Colors.neutral[500]}
-                  value={identifiant}
-                  onChangeText={setIdentifiant}
-                  onFocus={() => setIdentifiantFocused(true)}
-                  onBlur={() => setIdentifiantFocused(false)}
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                  autoComplete="email"
-                />
-              </View>
+              <Text style={styles.title}>Track&Go</Text>
+              <Text style={styles.subtitle}>
+                Suivez vos expéditions en temps réel
+              </Text>
             </View>
 
-            {/* Password Field */}
-            <View style={styles.fieldContainer}>
-              <View style={styles.labelRow}>
-                <Text style={styles.label}>Mot de passe</Text>
-                <Pressable>
-                  <Text style={styles.forgotLink}>Oublié ?</Text>
-                </Pressable>
-              </View>
-              <View
-                style={[
-                  styles.inputWrapper,
-                  passwordFocused && styles.inputWrapperFocused,
-                ]}
-              >
-                <Ionicons
-                  name="lock-closed-outline"
-                  size={20}
-                  color={passwordFocused ? Colors.primary : Colors.neutral[500]}
-                  style={styles.inputIcon}
-                />
-                <TextInput
-                  style={[styles.input, styles.passwordInput]}
-                  placeholder="Votre mot de passe"
-                  placeholderTextColor={Colors.neutral[500]}
-                  value={password}
-                  onChangeText={setPassword}
-                  onFocus={() => setPasswordFocused(true)}
-                  onBlur={() => setPasswordFocused(false)}
-                  secureTextEntry={!showPassword}
-                  autoCapitalize="none"
-                  autoComplete="password"
-                />
-                <Pressable
-                  onPress={() => setShowPassword(!showPassword)}
-                  style={styles.eyeButton}
-                >
+            {/* Login Form */}
+            <View style={styles.formContainer}>
+              {errorMessage ? (
+                <View style={styles.errorContainer}>
                   <Ionicons
-                    name={showPassword ? "eye-outline" : "eye-off-outline"}
+                    name="alert-circle-outline"
+                    size={18}
+                    color={Colors.error}
+                  />
+                  <Text style={styles.errorText}>{errorMessage}</Text>
+                </View>
+              ) : null}
+
+              {/* Identifiant Field */}
+              <View style={styles.fieldContainer}>
+                <Text style={styles.label}>Identifiant</Text>
+                <View style={styles.inputWrapper}>
+                  <Ionicons
+                    name="person-outline"
                     size={20}
                     color={Colors.neutral[500]}
+                    style={styles.inputIcon}
                   />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="nom@exemple.com"
+                    placeholderTextColor={Colors.neutral[500]}
+                    value={identifiant}
+                    onChangeText={setIdentifiant}
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                    autoComplete="email"
+                    blurOnSubmit={false}
+                    returnKeyType="next"
+                    onSubmitEditing={() => passwordRef.current?.focus()}
+                  />
+                </View>
+              </View>
+
+              {/* Password Field */}
+              <View style={styles.fieldContainer}>
+                <View style={styles.labelRow}>
+                  <Text style={styles.label}>Mot de passe</Text>
+                  <Pressable>
+                    <Text style={styles.forgotLink}>Oublié ?</Text>
+                  </Pressable>
+                </View>
+                <View style={styles.inputWrapper}>
+                  <Ionicons
+                    name="lock-closed-outline"
+                    size={20}
+                    color={Colors.neutral[500]}
+                    style={styles.inputIcon}
+                  />
+                  <TextInput
+                    ref={passwordRef}
+                    style={[styles.input, styles.passwordInput]}
+                    placeholder="Votre mot de passe"
+                    placeholderTextColor={Colors.neutral[500]}
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!showPassword}
+                    autoCapitalize="none"
+                    autoComplete="password"
+                    returnKeyType="done"
+                    onSubmitEditing={handleLogin}
+                  />
+                  <Pressable
+                    onPress={() => setShowPassword(!showPassword)}
+                    style={styles.eyeButton}
+                  >
+                    <Ionicons
+                      name={showPassword ? "eye-outline" : "eye-off-outline"}
+                      size={20}
+                      color={Colors.neutral[500]}
+                    />
+                  </Pressable>
+                </View>
+              </View>
+
+              {/* Submit Button */}
+              <Pressable
+                style={({ pressed }) => [
+                  styles.submitButton,
+                  pressed && styles.submitButtonPressed,
+                  loading && styles.submitButtonDisabled,
+                ]}
+                onPress={handleLogin}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#ffffff" />
+                ) : (
+                  <>
+                    <Text style={styles.submitText}>Se connecter</Text>
+                    <Ionicons name="arrow-forward" size={18} color="#ffffff" />
+                  </>
+                )}
+              </Pressable>
+            </View>
+
+            {/* Footer Section */}
+            <View style={styles.footer}>
+              <View style={styles.dividerContainer}>
+                <View style={styles.divider} />
+                <Text style={styles.dividerText}>OU CONTINUER AVEC</Text>
+                <View style={styles.divider} />
+              </View>
+
+              <View style={styles.socialButtons}>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.socialButton,
+                    pressed && styles.socialButtonPressed,
+                  ]}
+                >
+                  <Ionicons
+                    name="logo-google"
+                    size={20}
+                    color={Colors.neutral[700]}
+                  />
+                  <Text style={styles.socialButtonText}>Google</Text>
+                </Pressable>
+
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.socialButton,
+                    pressed && styles.socialButtonPressed,
+                  ]}
+                >
+                  <Ionicons
+                    name="logo-apple"
+                    size={20}
+                    color={Colors.neutral[700]}
+                  />
+                  <Text style={styles.socialButtonText}>Apple</Text>
                 </Pressable>
               </View>
+
+              <Text style={styles.signupText}>
+                Pas encore de compte ?{" "}
+                <Text style={styles.signupLink}>S&apos;inscrire</Text>
+              </Text>
             </View>
-
-            {/* Submit Button */}
-            <Pressable
-              style={({ pressed }) => [
-                styles.submitButton,
-                pressed && styles.submitButtonPressed,
-                loading && styles.submitButtonDisabled,
-              ]}
-              onPress={handleLogin}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#ffffff" />
-              ) : (
-                <>
-                  <Text style={styles.submitText}>Se connecter</Text>
-                  <Ionicons name="arrow-forward" size={18} color="#ffffff" />
-                </>
-              )}
-            </Pressable>
-          </View>
-
-          {/* Footer Section */}
-          <View style={styles.footer}>
-            <View style={styles.dividerContainer}>
-              <View style={styles.divider} />
-              <Text style={styles.dividerText}>OU CONTINUER AVEC</Text>
-              <View style={styles.divider} />
-            </View>
-
-            <View style={styles.socialButtons}>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.socialButton,
-                  pressed && styles.socialButtonPressed,
-                ]}
-              >
-                <Ionicons
-                  name="logo-google"
-                  size={20}
-                  color={Colors.neutral[700]}
-                />
-                <Text style={styles.socialButtonText}>Google</Text>
-              </Pressable>
-
-              <Pressable
-                style={({ pressed }) => [
-                  styles.socialButton,
-                  pressed && styles.socialButtonPressed,
-                ]}
-              >
-                <Ionicons
-                  name="logo-apple"
-                  size={20}
-                  color={Colors.neutral[700]}
-                />
-                <Text style={styles.socialButtonText}>Apple</Text>
-              </Pressable>
-            </View>
-
-            <Text style={styles.signupText}>
-              Pas encore de compte ?{" "}
-              <Text style={styles.signupLink}>S&apos;inscrire</Text>
-            </Text>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -307,14 +300,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.neutral[200],
     paddingHorizontal: 16,
     height: 56,
-  },
-  inputWrapperFocused: {
-    borderColor: Colors.primary,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
   },
   inputIcon: {
     marginRight: 12,
