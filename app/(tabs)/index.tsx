@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
+  Animated,
   Image,
   Pressable,
   ScrollView,
@@ -16,6 +17,26 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function TourneeScreen() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<"list" | "map">("list");
+  const scrollY = React.useRef(new Animated.Value(0)).current;
+
+  // Header/Progress height is approx 120px. We want to hide it completely after scrolling 100px.
+  const progressOpacity = scrollY.interpolate({
+    inputRange: [0, 60],
+    outputRange: [1, 0],
+    extrapolate: "clamp",
+  });
+
+  const progressTranslateY = scrollY.interpolate({
+    inputRange: [0, 80],
+    outputRange: [0, -40],
+    extrapolate: "clamp",
+  });
+
+  const progressScaleY = scrollY.interpolate({
+    inputRange: [0, 60],
+    outputRange: [1, 0],
+    extrapolate: "clamp",
+  });
 
   // Hardcoded for UI design matching
   const progression = { current: 12, total: 20 };
@@ -47,8 +68,24 @@ export default function TourneeScreen() {
           </Pressable>
         </View>
 
-        {/* Progress Summary */}
-        <View style={styles.progressSection}>
+        {/* Progress Summary - Animated */}
+        <Animated.View
+          style={[
+            styles.progressSection,
+            {
+              opacity: progressOpacity,
+              transform: [
+                { translateY: progressTranslateY },
+                { scaleY: progressScaleY },
+              ],
+              height: scrollY.interpolate({
+                inputRange: [0, 60],
+                outputRange: [80, 0],
+                extrapolate: "clamp",
+              }),
+            },
+          ]}
+        >
           <View style={styles.progressCard}>
             <View style={styles.progressHeader}>
               <Text style={styles.progressTitle}>
@@ -67,7 +104,7 @@ export default function TourneeScreen() {
               />
             </View>
           </View>
-        </View>
+        </Animated.View>
 
         {/* Top Tabs (List/Map inside the screen context) */}
         <View style={styles.topTabs}>
@@ -116,6 +153,11 @@ export default function TourneeScreen() {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false },
+        )}
+        scrollEventThrottle={16}
       >
         {/* Delivery Card 1: Pending */}
         <View style={[styles.card, styles.cardPending]}>
@@ -334,20 +376,18 @@ const styles = StyleSheet.create({
   },
   progressSection: {
     paddingHorizontal: 16,
-    paddingBottom: 16,
+    overflow: "hidden",
   },
   progressCard: {
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: "transparent",
     borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: Colors.neutral[100],
+    paddingVertical: 8,
   },
   progressHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
-    marginBottom: 8,
+    marginBottom: 12,
   },
   progressTitle: {
     fontSize: 14,
@@ -360,15 +400,23 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   progressBarTrack: {
-    height: 8,
-    backgroundColor: Colors.neutral[200],
-    borderRadius: 4,
-    overflow: "hidden",
+    height: 14,
+    backgroundColor: "rgba(0, 0, 0, 0.05)", // Soft, modern translucent track
+    borderRadius: 99,
+    padding: 3,
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "rgba(0, 0, 0, 0.02)",
   },
   progressBarFill: {
     height: "100%",
     backgroundColor: Colors.primary,
-    borderRadius: 4,
+    borderRadius: 99,
+    // Add a slight glow/shadow to the fill for premium feel
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   topTabs: {
     flexDirection: "row",

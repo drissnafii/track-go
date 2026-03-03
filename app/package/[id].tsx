@@ -36,12 +36,26 @@ export default function PackageDetailsScreen() {
           style={styles.reportButton}
           onPress={() => router.push("/incident")}
         >
-          <Text style={styles.reportButtonText}>Signaler un problème</Text>
+          <Ionicons
+            name="alert-circle-outline"
+            size={18}
+            color={Colors.error}
+            style={{ marginRight: 6 }}
+          />
+          <Text style={styles.reportButtonText} numberOfLines={1}>
+            Signaler un problème
+          </Text>
         </Pressable>
         <Pressable
           style={styles.deliverButton}
           onPress={() => router.push("/scan")}
         >
+          <Ionicons
+            name="checkmark-circle-outline"
+            size={18}
+            color={Colors.onPrimary}
+            style={{ marginRight: 6 }}
+          />
           <Text style={styles.deliverButtonText}>Livrer</Text>
         </Pressable>
       </View>
@@ -101,27 +115,33 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   reportButton: {
-    flex: 1,
+    flex: 1.4, // Give slightly more space to the longer text
+    flexDirection: "row",
     backgroundColor: Colors.errorContainer,
     paddingVertical: 14,
+    paddingHorizontal: 12,
     borderRadius: 9999,
     alignItems: "center",
+    justifyContent: "center",
   },
   reportButtonText: {
     color: Colors.error,
     fontWeight: "700",
-    fontSize: 16,
+    fontSize: 13, // Reduced slightly for breathing room
   },
   deliverButton: {
     flex: 1,
+    flexDirection: "row",
     backgroundColor: Colors.primary,
     paddingVertical: 14,
+    paddingHorizontal: 16,
     borderRadius: 9999,
     alignItems: "center",
+    justifyContent: "center",
   },
   deliverButtonText: {
     color: Colors.onPrimary,
     fontWeight: "700",
-    fontSize: 16,
+    fontSize: 14,
   },
 });
