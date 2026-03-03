@@ -1,14 +1,15 @@
 import { Colors } from "@/constants/colors";
 import { useAuth } from "@/contexts/auth-context";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
-    Image,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -144,7 +145,10 @@ export default function TourneeScreen() {
                 color={Colors.neutral[900]}
               />
             </View>
-            <Pressable style={styles.startButton}>
+            <Pressable
+              style={styles.startButton}
+              onPress={() => router.push("/package/1")}
+            >
               <Text style={styles.startButtonText}>Démarrer</Text>
             </Pressable>
           </View>
@@ -172,7 +176,10 @@ export default function TourneeScreen() {
           </View>
           <View style={styles.cardFooter}>
             <Text style={styles.timeInfoText}>Prévu: 14:30 - 15:00</Text>
-            <Pressable style={styles.detailsButton}>
+            <Pressable
+              style={styles.detailsButton}
+              onPress={() => router.push("/package/2")}
+            >
               <Text style={styles.detailsButtonText}>Détails</Text>
             </Pressable>
           </View>
