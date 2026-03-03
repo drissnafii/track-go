@@ -1,11 +1,108 @@
 import { Colors } from "@/constants/colors";
+import { tourneeService } from "@/services/tournee.service";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ScanScreen() {
   const { colisId } = useLocalSearchParams();
+
+  const [permission, requestPermission] = useCameraPermissions();
+  const [isScanning, setIsScanning] = React.useState(true);
+  const [isVerifying, setIsVerifying] = React.useState(false);
+
+  if (!permission) {
+    return null;
+  }
+
+  if (!permission.granted) {
+    return (
+      <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+        <View style={styles.permissionContainer}>
+          <Text style={styles.permissionTitle}>Accès caméra requis</Text>
+          <Text style={styles.permissionText}>
+            Pour scanner le code-barres du colis, autorisez l&apos;accès à la
+            caméra.
+          </Text>
+          <Pressable
+            style={styles.permissionButton}
+            onPress={requestPermission}
+          >
+            <Text style={styles.permissionButtonText}>Autoriser la caméra</Text>
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  const handleBarcodeScanned = async ({
+    data,
+  }: {
+    data: string;
+    type: string;
+  }) => {
+    if (!isScanning || !colisId) return;
+
+    setIsScanning(false);
+    setIsVerifying(true);
+
+    try {
+      const colis = await tourneeService.getColisById(colisId as string);
+
+      const matchesBarcode =
+        data.trim() === colis.barcode.trim() || data.trim() === colis.id.trim();
+
+      if (!matchesBarcode) {
+        Alert.alert(
+          "Code incorrect",
+          "Le code scanné ne correspond pas à ce colis.",
+          [
+            {
+              text: "Réessayer",
+              onPress: () => setIsScanning(true),
+            },
+            {
+              text: "Annuler",
+              style: "cancel",
+              onPress: () => router.back(),
+            },
+          ],
+        );
+        return;
+      }
+
+      router.replace({ pathname: "/signature", params: { colisId } });
+    } catch (error) {
+      console.error("Erreur vérification scan:", error);
+      Alert.alert(
+        "Erreur",
+        "Impossible de vérifier le colis. Vérifiez votre connexion et réessayez.",
+        [
+          {
+            text: "Réessayer",
+            onPress: () => setIsScanning(true),
+          },
+          {
+            text: "Annuler",
+            style: "cancel",
+            onPress: () => router.back(),
+          },
+        ],
+      );
+    } finally {
+      setIsVerifying(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
@@ -22,20 +119,33 @@ export default function ScanScreen() {
         />
       </View>
 
-      <View style={styles.cameraPlaceholder}>
-        <View style={styles.scanTarget}>
-          {/* Top Left */}
-          <View style={[styles.corner, styles.topLeft]} />
-          {/* Top Right */}
-          <View style={[styles.corner, styles.topRight]} />
-          {/* Bottom Left */}
-          <View style={[styles.corner, styles.bottomLeft]} />
-          {/* Bottom Right */}
-          <View style={[styles.corner, styles.bottomRight]} />
-        </View>
+      <View style={styles.cameraContainer}>
+        <CameraView
+          style={styles.camera}
+          facing="back"
+          barcodeScannerSettings={{
+            barcodeTypes: ["qr", "ean13", "ean8", "code128", "code39"],
+          }}
+          onBarcodeScanned={isScanning ? handleBarcodeScanned : undefined}
+        >
+          <View style={styles.overlay}>
+            <View style={styles.scanTarget}>
+              <View style={[styles.corner, styles.topLeft]} />
+              <View style={[styles.corner, styles.topRight]} />
+              <View style={[styles.corner, styles.bottomLeft]} />
+              <View style={[styles.corner, styles.bottomRight]} />
+            </View>
+          </View>
+        </CameraView>
         <Text style={styles.instructionText}>
-          Alignez le code-barres dans le cadre
+          Alignez le code-barres dans le cadre pour valider le colis.
         </Text>
+        {isVerifying && (
+          <View style={styles.verifyingBadge}>
+            <ActivityIndicator color="#ffffff" size="small" />
+            <Text style={styles.verifyingText}>Vérification du colis...</Text>
+          </View>
+        )}
       </View>
 
       <View style={styles.footer}>
@@ -76,14 +186,26 @@ const styles = StyleSheet.create({
   flashIcon: {
     padding: 8,
   },
-  cameraPlaceholder: {
+  cameraContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
+  camera: {
+    width: "90%",
+    aspectRatio: 3 / 4,
+    borderRadius: 24,
+    overflow: "hidden",
+  },
+  overlay: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.2)",
+  },
   scanTarget: {
-    width: 250,
-    height: 250,
+    width: 230,
+    height: 230,
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
@@ -122,8 +244,19 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 16,
     fontWeight: "500",
-    marginTop: 32,
+    marginTop: 16,
     textAlign: "center",
+  },
+  verifyingBadge: {
+    marginTop: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  verifyingText: {
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: "500",
   },
   footer: {
     padding: 24,
@@ -139,5 +272,35 @@ const styles = StyleSheet.create({
     color: Colors.onPrimary,
     fontWeight: "700",
     fontSize: 16,
+  },
+  permissionContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 24,
+  },
+  permissionTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#ffffff",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  permissionText: {
+    fontSize: 14,
+    color: "#ffffff",
+    textAlign: "center",
+    marginBottom: 24,
+  },
+  permissionButton: {
+    backgroundColor: Colors.primary,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 9999,
+  },
+  permissionButtonText: {
+    color: Colors.onPrimary,
+    fontWeight: "700",
+    fontSize: 15,
   },
 });

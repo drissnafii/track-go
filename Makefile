@@ -44,4 +44,5 @@ mock-logs:
 
 dev: mock-up start
 
-up: docker-compose up
+up:
+	docker compose up -d

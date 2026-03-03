@@ -54,7 +54,7 @@ export default function LoginScreen() {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+          keyboardShouldPersistTaps="always"
         >
           {/* Top Accent Bar */}
           <View style={styles.accentBar} />
@@ -310,11 +310,6 @@ const styles = StyleSheet.create({
   },
   inputWrapperFocused: {
     borderColor: Colors.primary,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
   },
   inputIcon: {
     marginRight: 12,
