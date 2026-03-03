@@ -1,11 +1,15 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { StyleSheet } from "react-native";
 
 export default function LoginScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Track&Go Login</Text>
-      <Text>Please sign in to access your tours.</Text>
-    </View>
+    <ThemedView style={styles.container}>
+      <ThemedText type="title" style={styles.title}>
+        Track&Go Login
+      </ThemedText>
+      <ThemedText>Please sign in to access your tours.</ThemedText>
+    </ThemedView>
   );
 }
 
@@ -14,10 +18,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    padding: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
     marginBottom: 10,
   },
 });
