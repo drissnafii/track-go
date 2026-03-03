@@ -1,12 +1,15 @@
 import { Colors } from "@/constants/colors";
 import { useAuth } from "@/contexts/auth-context";
+import { tourneeService } from "@/services/tournee.service";
+import { Colis, TourneeStats } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Animated,
   Image,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,7 +20,40 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function TourneeScreen() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<"list" | "map">("list");
+  const [colis, setColis] = useState<Colis[]>([]);
+  const [stats, setStats] = useState<TourneeStats | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const scrollY = React.useRef(new Animated.Value(0)).current;
+
+  const fetchData = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const tournees = await tourneeService.getTourneesForLivreur(user.id);
+      if (tournees.length > 0) {
+        // For demo, we take the first tournee found
+        const tourneeId = tournees[0].id;
+        const colisData = await tourneeService.getColisForTournee(tourneeId);
+        setColis(colisData.sort((a, b) => a.ordre - b.ordre));
+        setStats(tourneeService.computeStats(colisData));
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData();
+  };
 
   // Header/Progress height is approx 120px. We want to hide it completely after scrolling 100px.
   const progressOpacity = scrollY.interpolate({
@@ -38,9 +74,7 @@ export default function TourneeScreen() {
     extrapolate: "clamp",
   });
 
-  // Hardcoded for UI design matching
-  const progression = { current: 12, total: 20 };
-  const progressPercent = `${(progression.current / progression.total) * 100}%`;
+  const progressPercent = stats ? `${stats.progressPercent}%` : "0%";
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -51,7 +85,7 @@ export default function TourneeScreen() {
             <View style={styles.avatarContainer}>
               <Image
                 source={{
-                  uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuBJOwHfKDGINJ-RlABUC5eWXtiCy5N3FjK7uHCyULRTmFiPKsOa1p7oUcS998BfG4HFi8I0-xzY2R0VFQ9HX70Lsr7idxMVVXcMlHR7_2wr5VikPO6rT2YBSs73v6OiP8COg63qbrrYOluDBGCBmiEYC7eVut5cm-zAnirgwYG-nP2ou5JW_7ut3pMF-hzVBGTA-sVaWmfoKEcrg0NPNKMaTWyWJWXLLY4gc5udGpr8x7OPlQdFDCdKqmps4INnfKgWDbaTTljtd_mg",
+                  uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuBJOwHfKDGINJ-RlABUC5eWXtiCy5N3FjK7uHCyULRTmFiPKsOa1p7oUcS998BfG4HFi8I0-xzY2R0VFQ9HX70Lsr7idxMVVXcMlHR7_2wr5VikPO6rT2YBSs73v6OiP8COg63qbrrYOluDBGCBmiEYC7eVut5cm-zAnirgwYG-nP2ou5JW_7ut3pMF-hzVBGTA-sVaWmfoKEcrg0NPNKMaTWyWJWXLLY4gc53udGpr8x7OPlQdFDCdKqmps4INnfKgWDbaTTljtd_mg",
                 }}
                 style={styles.avatar}
               />
@@ -92,7 +126,7 @@ export default function TourneeScreen() {
                 Progression de la tournée
               </Text>
               <Text style={styles.progressText}>
-                {progression.current} / {progression.total} Livrés
+                {stats?.livres || 0} / {stats?.total || 0} Livrés
               </Text>
             </View>
             <View style={styles.progressBarTrack}>
@@ -158,162 +192,145 @@ export default function TourneeScreen() {
           { useNativeDriver: false },
         )}
         scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={Colors.primary}
+          />
+        }
       >
-        {/* Delivery Card 1: Pending */}
-        <View style={[styles.card, styles.cardPending]}>
-          <View style={styles.cardHeader}>
-            <View>
-              <Text style={styles.cardTitle}>Jean Dupont</Text>
-              <View style={styles.cardLocationRow}>
-                <Ionicons
-                  name="location-outline"
-                  size={14}
-                  color={Colors.neutral[500]}
-                />
-                <Text style={styles.cardLocationText}>
-                  12 Rue de la Paix, Paris
-                </Text>
-              </View>
-            </View>
-            <View style={styles.statusBadgePending}>
-              <Text style={styles.statusBadgeTextPending}>En attente</Text>
-            </View>
-          </View>
-          <View style={styles.cardFooter}>
-            <View style={styles.packageIconContainer}>
-              <Ionicons
-                name="cube-outline"
-                size={18}
-                color={Colors.neutral[900]}
-              />
-            </View>
-            <Pressable
-              style={styles.startButton}
-              onPress={() => router.push("/package/1")}
-            >
-              <Text style={styles.startButtonText}>Démarrer</Text>
-            </Pressable>
-          </View>
-        </View>
+        {colis.map((item) => {
+          const isLivre = item.status === "LIVRE";
+          const isIncident =
+            item.status === "ECHEC" || item.status === "INCIDENT";
 
-        {/* Delivery Card 2: Pending */}
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <View>
-              <Text style={styles.cardTitle}>Marie Lefebvre</Text>
-              <View style={styles.cardLocationRow}>
-                <Ionicons
-                  name="location-outline"
-                  size={14}
-                  color={Colors.neutral[500]}
-                />
-                <Text style={styles.cardLocationText}>
-                  45 Avenue des Champs-Élysées, Paris
-                </Text>
-              </View>
-            </View>
-            <View style={styles.statusBadgePending}>
-              <Text style={styles.statusBadgeTextPending}>En attente</Text>
-            </View>
-          </View>
-          <View style={styles.cardFooter}>
-            <Text style={styles.timeInfoText}>Prévu: 14:30 - 15:00</Text>
-            <Pressable
-              style={styles.detailsButton}
-              onPress={() => router.push("/package/2")}
+          return (
+            <View
+              key={item.id}
+              style={[styles.card, isLivre && styles.cardDelivered]}
             >
-              <Text style={styles.detailsButtonText}>Détails</Text>
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Delivery Card 3: Delivered */}
-        <View style={[styles.card, styles.cardDelivered]}>
-          <View style={styles.cardHeader}>
-            <View>
-              <Text style={[styles.cardTitle, styles.textStrikethrough]}>
-                Lucas Bernard
-              </Text>
-              <View style={styles.cardLocationRow}>
-                <Ionicons
-                  name="location-outline"
-                  size={14}
-                  color={Colors.neutral[500]}
-                />
-                <Text
-                  style={[
-                    styles.cardLocationText,
-                    { color: Colors.neutral[500] },
-                  ]}
+              <View style={styles.cardHeader}>
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={[
+                      styles.cardTitle,
+                      isLivre && styles.textStrikethrough,
+                    ]}
+                  >
+                    {item.destinataire.prenom} {item.destinataire.nom}
+                  </Text>
+                  <View style={styles.cardLocationRow}>
+                    <Ionicons
+                      name="location-outline"
+                      size={14}
+                      color={Colors.neutral[500]}
+                    />
+                    <Text
+                      style={[
+                        styles.cardLocationText,
+                        isLivre && { color: Colors.neutral[500] },
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {item.destinataire.adresse}, {item.destinataire.ville}
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  style={
+                    isLivre
+                      ? styles.statusBadgeDelivered
+                      : isIncident
+                        ? styles.statusBadgeIncident
+                        : styles.statusBadgePending
+                  }
                 >
-                  8 Boulevard Saint-Germain, Paris
-                </Text>
+                  {isLivre && (
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={12}
+                      color={Colors.status.LIVRE}
+                    />
+                  )}
+                  <Text
+                    style={
+                      isLivre
+                        ? styles.statusBadgeTextDelivered
+                        : isIncident
+                          ? styles.statusBadgeTextIncident
+                          : styles.statusBadgeTextPending
+                    }
+                  >
+                    {item.status.replace("_", " ")}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.cardFooter}>
+                <View style={styles.footerLeft}>
+                  <View style={styles.packageIconContainer}>
+                    <Ionicons
+                      name="cube-outline"
+                      size={18}
+                      color={
+                        isLivre ? Colors.neutral[500] : Colors.neutral[900]
+                      }
+                    />
+                  </View>
+                  <Text
+                    style={[
+                      styles.timeInfoText,
+                      isLivre && { color: Colors.neutral[500] },
+                    ]}
+                  >
+                    {isLivre
+                      ? `Livré à ${item.creneauLivraison.fin}`
+                      : `Porte: ${item.creneauLivraison.debut} - ${item.creneauLivraison.fin}`}
+                  </Text>
+                </View>
+                {isLivre ? (
+                  <Ionicons
+                    name="time-outline"
+                    size={20}
+                    color={Colors.neutral[200]}
+                  />
+                ) : (
+                  <Pressable
+                    style={
+                      item.status === "EN_COURS"
+                        ? styles.startButton
+                        : styles.detailsButton
+                    }
+                    onPress={() => router.push(`/package/${item.id}`)}
+                  >
+                    <Text
+                      style={
+                        item.status === "EN_COURS"
+                          ? styles.startButtonText
+                          : styles.detailsButtonText
+                      }
+                    >
+                      {item.status === "EN_COURS" ? "Reprendre" : "Détails"}
+                    </Text>
+                  </Pressable>
+                )}
               </View>
             </View>
-            <View style={styles.statusBadgeDelivered}>
-              <Ionicons
-                name="checkmark-circle"
-                size={12}
-                color={Colors.status.LIVRE}
-              />
-              <Text style={styles.statusBadgeTextDelivered}>Livré</Text>
-            </View>
-          </View>
-          <View style={styles.cardFooter}>
-            <Text style={[styles.timeInfoText, { color: Colors.neutral[500] }]}>
-              Livré à 10:15
-            </Text>
+          );
+        })}
+
+        {colis.length === 0 && !loading && (
+          <View style={styles.emptyContainer}>
             <Ionicons
-              name="time-outline"
-              size={20}
+              name="basket-outline"
+              size={48}
               color={Colors.neutral[200]}
             />
-          </View>
-        </View>
-
-        {/* Delivery Card 4: Delivered */}
-        <View style={[styles.card, styles.cardDelivered]}>
-          <View style={styles.cardHeader}>
-            <View>
-              <Text style={[styles.cardTitle, styles.textStrikethrough]}>
-                Sophie Martin
-              </Text>
-              <View style={styles.cardLocationRow}>
-                <Ionicons
-                  name="location-outline"
-                  size={14}
-                  color={Colors.neutral[500]}
-                />
-                <Text
-                  style={[
-                    styles.cardLocationText,
-                    { color: Colors.neutral[500] },
-                  ]}
-                >
-                  21 Rue de Rivoli, Paris
-                </Text>
-              </View>
-            </View>
-            <View style={styles.statusBadgeDelivered}>
-              <Ionicons
-                name="checkmark-circle"
-                size={12}
-                color={Colors.status.LIVRE}
-              />
-              <Text style={styles.statusBadgeTextDelivered}>Livré</Text>
-            </View>
-          </View>
-          <View style={styles.cardFooter}>
-            <Text style={[styles.timeInfoText, { color: Colors.neutral[500] }]}>
-              Livré à 09:45
+            <Text style={styles.emptyText}>
+              Aucun colis pour aujourd&apos;hui
             </Text>
-            <Ionicons
-              name="time-outline"
-              size={20}
-              color={Colors.neutral[200]}
-            />
           </View>
-        </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -531,10 +548,30 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     color: Colors.status.LIVRE,
   },
+  statusBadgeIncident: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: Colors.errorContainer,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(186, 26, 26, 0.2)",
+  },
+  statusBadgeTextIncident: {
+    fontSize: 10,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    color: Colors.error,
+  },
   cardFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  footerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
   },
   packageIconContainer: {
     width: 32,
@@ -572,5 +609,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "500",
     color: Colors.neutral[500],
+    flex: 1,
+  },
+  emptyContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 60,
+    gap: 16,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: Colors.neutral[500],
+    fontWeight: "500",
   },
 });

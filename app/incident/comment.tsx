@@ -1,8 +1,12 @@
 import { Colors } from "@/constants/colors";
+import { useAuth } from "@/contexts/auth-context";
+import { tourneeService } from "@/services/tournee.service";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
+    ActivityIndicator,
+    Alert,
     KeyboardAvoidingView,
     Platform,
     Pressable,
@@ -15,12 +19,46 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function IncidentCommentScreen() {
+  const { user } = useAuth();
+  const params = useLocalSearchParams();
   const [comment, setComment] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = () => {
-    // In a real app, this would submit the payload (reason, photo, comment) to the backend
-    // and then navigate back to the dashboard.
-    router.replace("/(tabs)");
+  const handleSubmit = async () => {
+    if (!user?.id || !params.colisId) return;
+
+    setIsSubmitting(true);
+    try {
+      const incidentData = {
+        colisId: params.colisId as string,
+        livreurId: user.id,
+        type: params.type as string,
+        photoUri: params.photoUri as string,
+        commentaire: comment,
+        timestamp: new Date().toISOString(),
+      };
+
+      // 1. Log incident
+      await tourneeService.reportIncident(incidentData);
+
+      // 2. Mark package as incident
+      await tourneeService.updateColisStatus(
+        params.colisId as string,
+        "INCIDENT",
+      );
+
+      Alert.alert("Succès", "L'incident a été signalé avec succès.", [
+        { text: "OK", onPress: () => router.dismissAll() },
+      ]);
+    } catch (error) {
+      console.error("Error submitting incident:", error);
+      Alert.alert(
+        "Erreur",
+        "Impossible de signaler l'incident. Veuillez réessayer.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -59,13 +97,23 @@ export default function IncidentCommentScreen() {
         </ScrollView>
 
         <View style={styles.footer}>
-          <Pressable style={styles.submitButton} onPress={handleSubmit}>
-            <Text style={styles.submitButtonText}>Valider le rapport</Text>
-            <Ionicons
-              name="checkmark-circle-outline"
-              size={20}
-              color={Colors.onPrimary}
-            />
+          <Pressable
+            style={[styles.submitButton, isSubmitting && { opacity: 0.7 }]}
+            onPress={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <ActivityIndicator color={Colors.onPrimary} />
+            ) : (
+              <>
+                <Text style={styles.submitButtonText}>Valider le rapport</Text>
+                <Ionicons
+                  name="checkmark-circle-outline"
+                  size={20}
+                  color={Colors.onPrimary}
+                />
+              </>
+            )}
           </Pressable>
         </View>
       </KeyboardAvoidingView>

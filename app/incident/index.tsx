@@ -1,6 +1,6 @@
 import { Colors } from "@/constants/colors";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -17,15 +17,13 @@ const REASONS = [
 ];
 
 export default function IncidentTypeScreen() {
+  const { colisId } = useLocalSearchParams();
+
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={Colors.neutral[500]}
-          />
+          <Ionicons name="arrow-back" size={24} color={Colors.neutral[900]} />
         </Pressable>
         <Text style={styles.headerTitle}>Signaler un problème (1/3)</Text>
         <View style={{ width: 24 }} />
@@ -42,7 +40,12 @@ export default function IncidentTypeScreen() {
             <Pressable
               key={reason.id}
               style={styles.optionCard}
-              onPress={() => router.push("/incident/camera")}
+              onPress={() =>
+                router.push({
+                  pathname: "/incident/camera",
+                  params: { colisId, type: reason.id },
+                })
+              }
             >
               <View style={styles.optionIconContainer}>
                 <Ionicons

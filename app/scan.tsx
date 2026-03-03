@@ -1,10 +1,12 @@
 import { Colors } from "@/constants/colors";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ScanScreen() {
+  const { colisId } = useLocalSearchParams();
+
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <View style={styles.header}>
@@ -39,7 +41,9 @@ export default function ScanScreen() {
       <View style={styles.footer}>
         <Pressable
           style={styles.bypassButton}
-          onPress={() => router.replace("/signature")}
+          onPress={() =>
+            router.replace({ pathname: "/signature", params: { colisId } })
+          }
         >
           <Text style={styles.bypassButtonText}>Simuler Scan Réussi</Text>
         </Pressable>

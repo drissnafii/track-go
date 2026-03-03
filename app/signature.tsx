@@ -1,13 +1,39 @@
 import { Colors } from "@/constants/colors";
+import { tourneeService } from "@/services/tournee.service";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useState } from "react";
+import {
+    ActivityIndicator,
+    Alert,
+    Pressable,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SignatureScreen() {
-  const handleSign = () => {
-    // Navigate back to the route list after successful delivery
-    router.replace("/(tabs)");
+  const { colisId } = useLocalSearchParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSign = async () => {
+    if (!colisId) return;
+
+    setIsSubmitting(true);
+    try {
+      // In a real app, we'd also upload the signature image as proof
+      await tourneeService.updateColisStatus(colisId as string, "LIVRE");
+
+      Alert.alert("Succès", "Livraison confirmée !", [
+        { text: "OK", onPress: () => router.dismissAll() },
+      ]);
+    } catch (error) {
+      console.error("Error confirming delivery:", error);
+      Alert.alert("Erreur", "Impossible de valider la livraison.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -55,9 +81,24 @@ export default function SignatureScreen() {
       </View>
 
       <View style={styles.footer}>
-        <Pressable style={styles.confirmButton} onPress={handleSign}>
-          <Text style={styles.confirmButtonText}>Confirmer la Réception</Text>
-          <Ionicons name="checkmark" size={20} color={Colors.onPrimary} />
+        <Pressable
+          style={[
+            styles.confirmButton,
+            (isSubmitting || !colisId) && { opacity: 0.7 },
+          ]}
+          onPress={handleSign}
+          disabled={isSubmitting || !colisId}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator color={Colors.onPrimary} />
+          ) : (
+            <>
+              <Text style={styles.confirmButtonText}>
+                Confirmer la Réception
+              </Text>
+              <Ionicons name="checkmark" size={20} color={Colors.onPrimary} />
+            </>
+          )}
         </Pressable>
       </View>
     </SafeAreaView>

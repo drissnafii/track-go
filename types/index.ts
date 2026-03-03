@@ -72,3 +72,13 @@ export interface TourneeStats {
   enAttente: number;
   progressPercent: number;
 }
+
+export interface Incident {
+  id?: string;
+  colisId: string;
+  livreurId: string;
+  type: string;
+  photoUri?: string;
+  commentaire?: string;
+  timestamp: string;
+}

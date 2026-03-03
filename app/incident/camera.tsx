@@ -1,10 +1,26 @@
 import { Colors } from "@/constants/colors";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function IncidentCameraScreen() {
+  const params = useLocalSearchParams();
+
+  const handleCapture = () => {
+    router.push({
+      pathname: "/incident/comment",
+      params: { ...params, photoUri: "mock_photo_uri_" + Date.now() },
+    });
+  };
+
+  const handleSkip = () => {
+    router.push({
+      pathname: "/incident/comment",
+      params: { ...params },
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <View style={styles.header}>
@@ -31,16 +47,10 @@ export default function IncidentCameraScreen() {
         <Text style={styles.footerHint}>
           Veuillez prendre une photo claire du problème.
         </Text>
-        <Pressable
-          style={styles.captureButton}
-          onPress={() => router.push("/incident/comment")}
-        >
+        <Pressable style={styles.captureButton} onPress={handleCapture}>
           <View style={styles.captureInner} />
         </Pressable>
-        <Pressable
-          onPress={() => router.push("/incident/comment")}
-          style={styles.skipLink}
-        >
+        <Pressable onPress={handleSkip} style={styles.skipLink}>
           <Text style={styles.skipText}>Ignorer cette étape</Text>
         </Pressable>
       </View>
