@@ -43,3 +43,5 @@ mock-logs:
 # --- Combined Commmands ---
 
 dev: mock-up start
+
+up: docker-compose up
