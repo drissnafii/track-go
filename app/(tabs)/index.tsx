@@ -3,12 +3,16 @@
 import ColisListItem from "@/components/dashboard/colis-list-item";
 import ProgressRing from "@/components/dashboard/progress-ring";
 import StatCard from "@/components/dashboard/stat-card";
+import { useAuth } from "@/contexts/auth-context";
 import { tourneeService } from "@/services/tournee.service";
-import type { Colis, Livreur, Tournee, TourneeStats } from "@/types";
+import type { Colis, Tournee, TourneeStats } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
+  Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -38,7 +42,7 @@ function capitalize(s: string) {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 export default function DashboardScreen() {
-  const [livreur, setLivreur] = useState<Livreur | null>(null);
+  const { user, logout } = useAuth();
   const [tournee, setTournee] = useState<Tournee | null>(null);
   const [colis, setColis] = useState<Colis[]>([]);
   const [stats, setStats] = useState<TourneeStats | null>(null);
@@ -46,15 +50,31 @@ export default function DashboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const handleLogout = () => {
+    Alert.alert(
+      "Déconnexion",
+      "Voulez-vous vraiment vous déconnecter ?",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Déconnexion",
+          style: "destructive",
+          onPress: () => {
+            logout();
+            router.replace("/login");
+          },
+        },
+      ]
+    );
+  };
+
   const fetchData = useCallback(async () => {
     try {
       setError(null);
-      const [livreurData, tourneeData, colisData] = await Promise.all([
-        tourneeService.getLivreurById(LIVREUR_ID),
+      const [tourneeData, colisData] = await Promise.all([
         tourneeService.getTourneeById(TOURNEE_ID),
         tourneeService.getColisForTournee(TOURNEE_ID),
       ]);
-      setLivreur(livreurData);
       setTournee(tourneeData);
       setColis(colisData);
       setStats(tourneeService.computeStats(colisData));
@@ -118,12 +138,17 @@ export default function DashboardScreen() {
           <View>
             <Text style={styles.greeting}>Bonjour,</Text>
             <Text style={styles.name}>
-              {livreur ? `${livreur.prenom} ${livreur.nom}` : "Livreur"}
+              {user ? `${user.prenom} ${user.nom}` : "Livreur"}
             </Text>
           </View>
-          <View style={styles.zonePill}>
-            <Ionicons name="location-outline" size={14} color="#2563EB" />
-            <Text style={styles.zoneText}>{tournee?.zone ?? "—"}</Text>
+          <View style={styles.headerRight}>
+            <View style={styles.zonePill}>
+              <Ionicons name="location-outline" size={14} color="#2563EB" />
+              <Text style={styles.zoneText}>{tournee?.zone ?? "—"}</Text>
+            </View>
+            <Pressable onPress={handleLogout} style={styles.logoutButton}>
+              <Ionicons name="log-out-outline" size={22} color="#EF4444" />
+            </Pressable>
           </View>
         </View>
 
@@ -226,6 +251,11 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginBottom: 4,
   },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
   greeting: {
     fontSize: 14,
     color: "#64748B",
@@ -251,6 +281,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     color: "#2563EB",
+  },
+  logoutButton: {
+    padding: 6,
+    backgroundColor: "#FEF2F2",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#FECACA",
   },
   dateText: {
     fontSize: 13,
