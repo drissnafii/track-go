@@ -3,16 +3,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -24,6 +24,7 @@ export default function LoginScreen() {
   const [identifiantFocused, setIdentifiantFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async () => {
     if (!identifiant || !password) {
@@ -33,10 +34,11 @@ export default function LoginScreen() {
 
     try {
       setLoading(true);
+      setErrorMessage("");
       await login(identifiant, password);
       router.replace("/(tabs)");
-    } catch (error) {
-      Alert.alert("Erreur", "Identifiants incorrects");
+    } catch {
+      setErrorMessage("Identifiant ou mot de passe incorrect");
     } finally {
       setLoading(false);
     }
@@ -69,6 +71,17 @@ export default function LoginScreen() {
 
           {/* Login Form */}
           <View style={styles.formContainer}>
+            {errorMessage ? (
+              <View style={styles.errorContainer}>
+                <Ionicons
+                  name="alert-circle-outline"
+                  size={18}
+                  color="#ef4444"
+                />
+                <Text style={styles.errorText}>{errorMessage}</Text>
+              </View>
+            ) : null}
+
             {/* Identifiant Field */}
             <View style={styles.fieldContainer}>
               <Text style={styles.label}>Identifiant</Text>
@@ -384,5 +397,19 @@ const styles = StyleSheet.create({
   signupLink: {
     fontWeight: "700",
     color: "#0057d1",
+  },
+  errorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    padding: 12,
+    borderRadius: 12,
+    gap: 8,
+    marginBottom: 8,
+  },
+  errorText: {
+    color: "#ef4444",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
