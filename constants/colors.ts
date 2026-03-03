@@ -3,47 +3,58 @@
 import { Platform } from "react-native";
 
 export const Colors = {
-  primary: "#2563EB",
-  primaryDark: "#1D4ED8",
-  secondary: "#7C3AED",
-  success: "#22C55E",
-  warning: "#F59E0B",
-  danger: "#EF4444",
-  neutral: {
-    50: "#F8FAFC",
-    100: "#F1F5F9",
-    200: "#E2E8F0",
-    500: "#64748B",
-    700: "#334155",
-    900: "#0F172A",
-  },
-  background: "#FFFFFF",
-  backgroundDark: "#0F172A",
+  // MD3-inspired soft and friendly palette
+  primary: "#0062a1", // Soft Blue
+  onPrimary: "#ffffff",
+  primaryContainer: "#d1e4ff",
+  onPrimaryContainer: "#001d36",
 
-  // Status-specific colors for map markers and badges
+  secondary: "#535f71", // Muted Slate
+  secondaryContainer: "#d7e3f7",
+  onSecondaryContainer: "#101c2b",
+
+  tertiary: "#6b5778", // Soft Purple
+  tertiaryContainer: "#f2daff",
+  onTertiaryContainer: "#251431",
+
+  error: "#ba1a1a",
+  errorContainer: "#ffdad6",
+  onErrorContainer: "#410002",
+
+  neutral: {
+    50: "#fdfcff",
+    100: "#f1f0f4",
+    200: "#e3e2e6",
+    500: "#76777a",
+    700: "#44474b",
+    900: "#1a1c1e",
+  },
+
+  background: "#fdfcff",
+
   status: {
-    EN_ATTENTE: "#94A3B8", // Gray
-    EN_COURS: "#F59E0B", // Orange
-    LIVRE: "#22C55E", // Green
-    ECHEC: "#EF4444", // Red
-    INCIDENT: "#EF4444", // Red
+    EN_ATTENTE: "#535f71",
+    EN_COURS: "#6d5e00",
+    LIVRE: "#006d3b",
+    ECHEC: "#ba1a1a",
+    INCIDENT: "#ba1a1a",
   },
 
   light: {
-    text: "#11181C",
-    background: "#FFFFFF",
-    tint: "#2563EB",
-    icon: "#687076",
-    tabIconDefault: "#687076",
-    tabIconSelected: "#2563EB",
+    text: "#1a1c1e",
+    background: "#fdfcff",
+    tint: "#0062a1",
+    icon: "#44474b",
+    tabIconDefault: "#44474b",
+    tabIconSelected: "#0062a1",
   },
   dark: {
-    text: "#ECEDEE",
-    background: "#0F172A",
-    tint: "#60A5FA",
-    icon: "#9BA1A6",
-    tabIconDefault: "#9BA1A6",
-    tabIconSelected: "#60A5FA",
+    text: "#e2e2e6",
+    background: "#1a1c1e",
+    tint: "#9ecaff",
+    icon: "#8e9199",
+    tabIconDefault: "#8e9199",
+    tabIconSelected: "#9ecaff",
   },
 };
 

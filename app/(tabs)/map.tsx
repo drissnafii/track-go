@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/colors";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function MapScreen() {
@@ -13,11 +14,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f5f7f8",
+    backgroundColor: Colors.background,
   },
   text: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#0057d1",
+    color: Colors.primary,
   },
 });

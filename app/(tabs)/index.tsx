@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/colors";
 import { useAuth } from "@/contexts/auth-context";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
@@ -41,7 +42,7 @@ export default function TourneeScreen() {
             </View>
           </View>
           <Pressable style={styles.syncButton}>
-            <Ionicons name="sync" size={24} color="#475569" />
+            <Ionicons name="sync" size={24} color={Colors.neutral[500]} />
           </Pressable>
         </View>
 
@@ -76,7 +77,9 @@ export default function TourneeScreen() {
             <Ionicons
               name="list"
               size={20}
-              color={activeTab === "list" ? "#0057d1" : "#64748b"}
+              color={
+                activeTab === "list" ? Colors.primary : Colors.neutral[500]
+              }
             />
             <Text
               style={[
@@ -94,7 +97,7 @@ export default function TourneeScreen() {
             <Ionicons
               name="map-outline"
               size={20}
-              color={activeTab === "map" ? "#0057d1" : "#64748b"}
+              color={activeTab === "map" ? Colors.primary : Colors.neutral[500]}
             />
             <Text
               style={[
@@ -119,7 +122,11 @@ export default function TourneeScreen() {
             <View>
               <Text style={styles.cardTitle}>Jean Dupont</Text>
               <View style={styles.cardLocationRow}>
-                <Ionicons name="location-outline" size={14} color="#64748b" />
+                <Ionicons
+                  name="location-outline"
+                  size={14}
+                  color={Colors.neutral[500]}
+                />
                 <Text style={styles.cardLocationText}>
                   12 Rue de la Paix, Paris
                 </Text>
@@ -131,7 +138,11 @@ export default function TourneeScreen() {
           </View>
           <View style={styles.cardFooter}>
             <View style={styles.packageIconContainer}>
-              <Ionicons name="cube-outline" size={18} color="#0F172A" />
+              <Ionicons
+                name="cube-outline"
+                size={18}
+                color={Colors.neutral[900]}
+              />
             </View>
             <Pressable style={styles.startButton}>
               <Text style={styles.startButtonText}>Démarrer</Text>
@@ -145,7 +156,11 @@ export default function TourneeScreen() {
             <View>
               <Text style={styles.cardTitle}>Marie Lefebvre</Text>
               <View style={styles.cardLocationRow}>
-                <Ionicons name="location-outline" size={14} color="#64748b" />
+                <Ionicons
+                  name="location-outline"
+                  size={14}
+                  color={Colors.neutral[500]}
+                />
                 <Text style={styles.cardLocationText}>
                   45 Avenue des Champs-Élysées, Paris
                 </Text>
@@ -171,22 +186,39 @@ export default function TourneeScreen() {
                 Lucas Bernard
               </Text>
               <View style={styles.cardLocationRow}>
-                <Ionicons name="location-outline" size={14} color="#94a3b8" />
-                <Text style={[styles.cardLocationText, { color: "#94a3b8" }]}>
+                <Ionicons
+                  name="location-outline"
+                  size={14}
+                  color={Colors.neutral[500]}
+                />
+                <Text
+                  style={[
+                    styles.cardLocationText,
+                    { color: Colors.neutral[500] },
+                  ]}
+                >
                   8 Boulevard Saint-Germain, Paris
                 </Text>
               </View>
             </View>
             <View style={styles.statusBadgeDelivered}>
-              <Ionicons name="checkmark-circle" size={12} color="#15803d" />
+              <Ionicons
+                name="checkmark-circle"
+                size={12}
+                color={Colors.status.LIVRE}
+              />
               <Text style={styles.statusBadgeTextDelivered}>Livré</Text>
             </View>
           </View>
           <View style={styles.cardFooter}>
-            <Text style={[styles.timeInfoText, { color: "#94a3b8" }]}>
+            <Text style={[styles.timeInfoText, { color: Colors.neutral[500] }]}>
               Livré à 10:15
             </Text>
-            <Ionicons name="time-outline" size={20} color="#cbd5e1" />
+            <Ionicons
+              name="time-outline"
+              size={20}
+              color={Colors.neutral[200]}
+            />
           </View>
         </View>
 
@@ -198,22 +230,39 @@ export default function TourneeScreen() {
                 Sophie Martin
               </Text>
               <View style={styles.cardLocationRow}>
-                <Ionicons name="location-outline" size={14} color="#94a3b8" />
-                <Text style={[styles.cardLocationText, { color: "#94a3b8" }]}>
+                <Ionicons
+                  name="location-outline"
+                  size={14}
+                  color={Colors.neutral[500]}
+                />
+                <Text
+                  style={[
+                    styles.cardLocationText,
+                    { color: Colors.neutral[500] },
+                  ]}
+                >
                   21 Rue de Rivoli, Paris
                 </Text>
               </View>
             </View>
             <View style={styles.statusBadgeDelivered}>
-              <Ionicons name="checkmark-circle" size={12} color="#15803d" />
+              <Ionicons
+                name="checkmark-circle"
+                size={12}
+                color={Colors.status.LIVRE}
+              />
               <Text style={styles.statusBadgeTextDelivered}>Livré</Text>
             </View>
           </View>
           <View style={styles.cardFooter}>
-            <Text style={[styles.timeInfoText, { color: "#94a3b8" }]}>
+            <Text style={[styles.timeInfoText, { color: Colors.neutral[500] }]}>
               Livré à 09:45
             </Text>
-            <Ionicons name="time-outline" size={20} color="#cbd5e1" />
+            <Ionicons
+              name="time-outline"
+              size={20}
+              color={Colors.neutral[200]}
+            />
           </View>
         </View>
       </ScrollView>
@@ -224,12 +273,12 @@ export default function TourneeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: Colors.background,
   },
   header: {
-    backgroundColor: "#ffffff",
+    backgroundColor: Colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: "#f1f5f9",
+    borderBottomColor: Colors.neutral[100],
   },
   headerTop: {
     flexDirection: "row",
@@ -248,9 +297,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#e0e7ff",
+    backgroundColor: Colors.primaryContainer,
     borderWidth: 1,
-    borderColor: "#c7d2fe",
+    borderColor: "rgba(0, 98, 161, 0.2)",
     overflow: "hidden",
     justifyContent: "center",
     alignItems: "center",
@@ -262,12 +311,12 @@ const styles = StyleSheet.create({
   greetingTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#0f172a",
+    color: Colors.neutral[900],
   },
   greetingSubtitle: {
     fontSize: 12,
     fontWeight: "500",
-    color: "#64748b",
+    color: Colors.neutral[500],
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
@@ -281,11 +330,11 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   progressCard: {
-    backgroundColor: "#f8fafc",
-    borderRadius: 8,
-    padding: 12,
+    backgroundColor: Colors.neutral[50],
+    borderRadius: 16,
+    padding: 16,
     borderWidth: 1,
-    borderColor: "#f1f5f9",
+    borderColor: Colors.neutral[100],
   },
   progressHeader: {
     flexDirection: "row",
@@ -296,28 +345,28 @@ const styles = StyleSheet.create({
   progressTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#334155",
+    color: Colors.neutral[700],
   },
   progressText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#0057d1",
+    color: Colors.primary,
   },
   progressBarTrack: {
     height: 8,
-    backgroundColor: "#e2e8f0",
+    backgroundColor: Colors.neutral[200],
     borderRadius: 4,
     overflow: "hidden",
   },
   progressBarFill: {
     height: "100%",
-    backgroundColor: "#0057d1",
+    backgroundColor: Colors.primary,
     borderRadius: 4,
   },
   topTabs: {
     flexDirection: "row",
     borderTopWidth: 1,
-    borderTopColor: "#f1f5f9",
+    borderTopColor: Colors.neutral[100],
   },
   topTab: {
     flex: 1,
@@ -330,44 +379,43 @@ const styles = StyleSheet.create({
     borderBottomColor: "transparent",
   },
   topTabActive: {
-    borderBottomColor: "#0057d1",
+    borderBottomColor: Colors.primary,
   },
   topTabText: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#64748b",
+    color: Colors.neutral[500],
   },
   topTabTextActive: {
-    color: "#0057d1",
+    color: Colors.primary,
   },
   scrollContent: {
     padding: 16,
     gap: 16,
-    backgroundColor: "#f5f7f8",
+    backgroundColor: Colors.neutral[100],
     paddingBottom: 100, // Extra space for bottom nav
     flexGrow: 1,
   },
   // Card Styles
   card: {
     backgroundColor: "#ffffff",
-    borderRadius: 12,
+    borderRadius: 20, // More rounded MD3 style
     padding: 16,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    borderColor: Colors.neutral[200],
+    shadowColor: Colors.neutral[900],
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
     elevation: 2,
   },
   cardPending: {
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
     elevation: 4,
   },
   cardDelivered: {
-    backgroundColor: "#f8fafc", // Or slightly transparent
+    backgroundColor: Colors.neutral[50], // Very soft contrast
     opacity: 0.8,
     shadowOpacity: 0,
     elevation: 0,
@@ -381,12 +429,12 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0f172a",
+    color: Colors.neutral[900],
     marginBottom: 2,
   },
   textStrikethrough: {
     textDecorationLine: "line-through",
-    color: "#94a3b8",
+    color: Colors.neutral[500],
   },
   cardLocationRow: {
     flexDirection: "row",
@@ -395,21 +443,21 @@ const styles = StyleSheet.create({
   },
   cardLocationText: {
     fontSize: 14,
-    color: "#64748b",
+    color: Colors.neutral[700],
   },
   statusBadgePending: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    backgroundColor: "#f1f5f9",
-    borderRadius: 4,
+    backgroundColor: Colors.neutral[100],
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: Colors.neutral[200],
   },
   statusBadgeTextPending: {
     fontSize: 10,
     fontWeight: "700",
     textTransform: "uppercase",
-    color: "#475569",
+    color: Colors.neutral[700],
   },
   statusBadgeDelivered: {
     flexDirection: "row",
@@ -417,16 +465,16 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    backgroundColor: "#dcfce7", // green-100
-    borderRadius: 4,
+    backgroundColor: "rgba(0, 109, 59, 0.1)", // Soft green
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#bbf7d0", // green-200
+    borderColor: "rgba(0, 109, 59, 0.2)",
   },
   statusBadgeTextDelivered: {
     fontSize: 10,
     fontWeight: "700",
     textTransform: "uppercase",
-    color: "#15803d", // green-700
+    color: Colors.status.LIVRE,
   },
   cardFooter: {
     flexDirection: "row",
@@ -437,37 +485,37 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 8,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: Colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 2,
-    borderColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: Colors.neutral[200],
   },
   startButton: {
-    backgroundColor: "#0057d1",
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 8,
+    backgroundColor: Colors.primary,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 9999, // MD3 Pill style
   },
   startButtonText: {
-    color: "#ffffff",
+    color: Colors.onPrimary,
     fontSize: 14,
     fontWeight: "700",
   },
   detailsButton: {
-    backgroundColor: "#f1f5f9",
+    backgroundColor: Colors.secondaryContainer,
     paddingVertical: 8,
     paddingHorizontal: 20,
-    borderRadius: 8,
+    borderRadius: 9999, // MD3 Pill style
   },
   detailsButtonText: {
-    color: "#334155",
+    color: Colors.onSecondaryContainer,
     fontSize: 14,
     fontWeight: "700",
   },
   timeInfoText: {
     fontSize: 12,
     fontWeight: "500",
-    color: "#94a3b8",
+    color: Colors.neutral[500],
   },
 });

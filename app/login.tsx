@@ -1,18 +1,19 @@
+import { Colors } from "@/constants/colors";
 import { useAuth } from "@/contexts/auth-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -61,9 +62,9 @@ export default function LoginScreen() {
           {/* Logo Section */}
           <View style={styles.logoSection}>
             <View style={styles.logoContainer}>
-              <Ionicons name="cube" size={48} color="#0057d1" />
+              <Ionicons name="cube" size={48} color={Colors.primary} />
             </View>
-            <Text style={styles.title}>Track&amp;Go</Text>
+            <Text style={styles.title}>Track&Go</Text>
             <Text style={styles.subtitle}>
               Suivez vos expéditions en temps réel
             </Text>
@@ -76,7 +77,7 @@ export default function LoginScreen() {
                 <Ionicons
                   name="alert-circle-outline"
                   size={18}
-                  color="#ef4444"
+                  color={Colors.error}
                 />
                 <Text style={styles.errorText}>{errorMessage}</Text>
               </View>
@@ -94,13 +95,15 @@ export default function LoginScreen() {
                 <Ionicons
                   name="person-outline"
                   size={20}
-                  color={identifiantFocused ? "#0057d1" : "#94a3b8"}
+                  color={
+                    identifiantFocused ? Colors.primary : Colors.neutral[500]
+                  }
                   style={styles.inputIcon}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="nom@exemple.com"
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor={Colors.neutral[500]}
                   value={identifiant}
                   onChangeText={setIdentifiant}
                   onFocus={() => setIdentifiantFocused(true)}
@@ -129,13 +132,13 @@ export default function LoginScreen() {
                 <Ionicons
                   name="lock-closed-outline"
                   size={20}
-                  color={passwordFocused ? "#0057d1" : "#94a3b8"}
+                  color={passwordFocused ? Colors.primary : Colors.neutral[500]}
                   style={styles.inputIcon}
                 />
                 <TextInput
                   style={[styles.input, styles.passwordInput]}
                   placeholder="Votre mot de passe"
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor={Colors.neutral[500]}
                   value={password}
                   onChangeText={setPassword}
                   onFocus={() => setPasswordFocused(true)}
@@ -151,7 +154,7 @@ export default function LoginScreen() {
                   <Ionicons
                     name={showPassword ? "eye-outline" : "eye-off-outline"}
                     size={20}
-                    color="#94a3b8"
+                    color={Colors.neutral[500]}
                   />
                 </Pressable>
               </View>
@@ -193,7 +196,11 @@ export default function LoginScreen() {
                   pressed && styles.socialButtonPressed,
                 ]}
               >
-                <Ionicons name="logo-google" size={20} color="#0F172A" />
+                <Ionicons
+                  name="logo-google"
+                  size={20}
+                  color={Colors.neutral[700]}
+                />
                 <Text style={styles.socialButtonText}>Google</Text>
               </Pressable>
 
@@ -203,7 +210,11 @@ export default function LoginScreen() {
                   pressed && styles.socialButtonPressed,
                 ]}
               >
-                <Ionicons name="logo-apple" size={20} color="#0F172A" />
+                <Ionicons
+                  name="logo-apple"
+                  size={20}
+                  color={Colors.neutral[700]}
+                />
                 <Text style={styles.socialButtonText}>Apple</Text>
               </Pressable>
             </View>
@@ -222,7 +233,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f7f8",
+    backgroundColor: Colors.background,
   },
   keyboardView: {
     flex: 1,
@@ -239,7 +250,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 4,
-    backgroundColor: "#0057d1",
+    backgroundColor: Colors.primary,
   },
   logoSection: {
     alignItems: "center",
@@ -247,7 +258,7 @@ const styles = StyleSheet.create({
     marginBottom: 48,
   },
   logoContainer: {
-    backgroundColor: "rgba(0, 87, 209, 0.1)",
+    backgroundColor: Colors.primaryContainer,
     padding: 16,
     borderRadius: 24,
     marginBottom: 16,
@@ -255,13 +266,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 36,
     fontWeight: "700",
-    color: "#0F172A",
+    color: Colors.neutral[900],
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#64748B",
+    color: Colors.neutral[500],
   },
   formContainer: {
     gap: 16,
@@ -273,7 +284,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#334155",
+    color: Colors.neutral[700],
     paddingHorizontal: 4,
   },
   labelRow: {
@@ -285,7 +296,7 @@ const styles = StyleSheet.create({
   forgotLink: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#0057d1",
+    color: Colors.primary,
   },
   inputWrapper: {
     flexDirection: "row",
@@ -293,13 +304,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: Colors.neutral[200],
     paddingHorizontal: 16,
     height: 56,
   },
   inputWrapperFocused: {
-    borderColor: "#0057d1",
-    shadowColor: "#0057d1",
+    borderColor: Colors.primary,
+    shadowColor: Colors.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -311,7 +322,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: "#0F172A",
+    color: Colors.neutral[900],
   },
   passwordInput: {
     paddingRight: 8,
@@ -323,16 +334,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#0057d1",
+    backgroundColor: Colors.primary,
     borderRadius: 9999,
     height: 56,
     marginTop: 16,
     gap: 8,
-    shadowColor: "#0057d1",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 6,
   },
   submitButtonPressed: {
     transform: [{ scale: 0.98 }],
@@ -357,12 +363,12 @@ const styles = StyleSheet.create({
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: "#e2e8f0",
+    backgroundColor: Colors.neutral[200],
   },
   dividerText: {
     fontSize: 11,
     fontWeight: "500",
-    color: "#94a3b8",
+    color: Colors.neutral[500],
     letterSpacing: 1.2,
   },
   socialButtons: {
@@ -375,40 +381,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#ffffff",
-    borderRadius: 24,
+    borderRadius: 9999,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
-    height: 48,
+    borderColor: Colors.neutral[200],
+    height: 52,
     gap: 8,
   },
   socialButtonPressed: {
-    backgroundColor: "#f8fafc",
+    backgroundColor: Colors.neutral[50],
   },
   socialButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#334155",
+    color: Colors.neutral[700],
   },
   signupText: {
     fontSize: 14,
-    color: "#64748B",
+    color: Colors.neutral[500],
     textAlign: "center",
   },
   signupLink: {
     fontWeight: "700",
-    color: "#0057d1",
+    color: Colors.primary,
   },
   errorContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    backgroundColor: Colors.errorContainer,
     padding: 12,
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(186, 26, 26, 0.2)",
     gap: 8,
     marginBottom: 8,
   },
   errorText: {
-    color: "#ef4444",
+    color: Colors.error,
     fontSize: 14,
     fontWeight: "600",
   },
