@@ -1,3 +1,4 @@
+import { authService } from "@/services/auth.service";
 import React, { createContext, useContext, useState } from "react";
 
 interface User {
@@ -20,16 +21,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   const login = async (email: string, password: string) => {
-    // TODO: Implement actual API call
-    // For now, simulate login
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    
-    setUser({
-      id: "liv-001",
-      email,
-      nom: "Dupont",
-      prenom: "Jean",
-    });
+    try {
+      const userData = await authService.login(email, password);
+      // In a real app, you would also save a JWT token here
+      setUser({
+        id: userData.id,
+        email: userData.email,
+        nom: userData.nom,
+        prenom: userData.prenom,
+      });
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
+    }
   };
 
   const logout = () => {
