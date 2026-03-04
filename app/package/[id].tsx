@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: Colors.neutral[400],
+    color: Colors.neutral[500],
   },
   footer: {
     flexDirection: "row",
