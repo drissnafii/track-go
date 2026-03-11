@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/colors";
 import { tourneeService } from "@/services/tournee.service";
-import { CameraView, useCameraPermissions } from "expo-camera";
 import { Ionicons } from "@expo/vector-icons";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
 import {
